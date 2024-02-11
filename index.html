@@ -92,30 +92,24 @@
         </main>
         <script>
             const socket = io();
-    
-            // メッセージ送信フォームの要素を取得
+
             const form = document.getElementById('form');
             const nameInput = document.getElementById('name');
             const messageInput = document.getElementById('message');
-    
-            // フォームの送信イベントをリッスン
+
             form.addEventListener('submit', (e) => {
-                e.preventDefault(); // デフォルトの動作をキャンセル
-    
-                // 入力された名前とメッセージを取得
+                e.preventDefault();
+
                 const name = nameInput.value;
                 const message = messageInput.value;
-    
-                // サーバーにメッセージを送信
+
                 if (name.trim() && message.trim()) {
                     socket.emit('chat message', `${name}: ${message}`);
-    
-                    // 入力欄をクリア
+
                     messageInput.value = '';
                 }
             });
-    
-            // サーバーから受信したメッセージを表示
+
             socket.on('chat message', (msg) => {
                 const messagesDiv = document.getElementById('messages');
                 const messageElement = document.createElement('div');
