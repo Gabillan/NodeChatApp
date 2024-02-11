@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KietRoom</title>
+        <style>
+            html,body {
+                font-family: Sans-Serif;
+                font-weight: 100;
+                background-color: #666;
+                color: #fff;
+            }
+            header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 3px;
+                background-color: #fff2;
+                border: .5px solid #fff4;
+                -webkit-backdrop-filter: blur(4px);
+                backdrop-filter: blur(4px);
+                box-shadow: 0 0 4px #000;
+            }
+            main {
+                margin-top: 100px;
+                padding: 15px;
+                margin-bottom: 100px;
+            }
+            .form {
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #0001;
+                border: .5px solid #0004;
+                box-shadow: 0 0 8px #fff;
+            }
+            #name {
+                margin-bottom: 10px;
+                width: 200px;
+            }
+            #message {
+                width: 200px;
+                height: 100px;
+                margin-bottom: 20px;
+            }
+            #message,#name {
+                border-color: #fff;
+                outline: none;
+                border-width: 1px;
+                border-radius: 1px;
+                box-shadow: 0 0 3px #000;
+            }
+            #message:focus,#name:focus {
+                border-color: #00f;
+                box-shadow: 0 0 3px #00f;
+            }
+            .button {
+                color: #fff;
+                border: 1px solid #fff;
+                border-radius: 2px;
+                background-color: #444;
+                padding: 2px;
+                font-size: 20px;
+                box-shadow: 1px 1px 2px #000;
+            }
+            .button:focus {
+                background-color: #777;
+            }
+            #messages {
+                padding: 10px;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.4/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <header>
+            <h1>KietRoom</h1>
+        </header>
+        <main>
+            <h2>LOG</h2>
+            <div id="messages"></div>
+            <div class="form">
+                <form id="form">
+                    <p>name:</p><input type="name" id="name" placeholder="名前を入力してください">
+                    <p>message:</p><textarea id="message" placeholder="メッセージ内容を入力してください。"></textarea><br>
+                    <input type="reset" value="リセット" class="button">
+                    <input type="submit" value="送信" class="button">
+                </form>
+            </div>
+        </main>
+        <script>
+            const socket = io();
+    
+            // メッセージ送信フォームの要素を取得
+            const form = document.getElementById('form');
+            const nameInput = document.getElementById('name');
+            const messageInput = document.getElementById('message');
+    
+            // フォームの送信イベントをリッスン
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // デフォルトの動作をキャンセル
+    
+                // 入力された名前とメッセージを取得
+                const name = nameInput.value;
+                const message = messageInput.value;
+    
+                // サーバーにメッセージを送信
+                if (name.trim() && message.trim()) {
+                    socket.emit('chat message', `${name}: ${message}`);
+    
+                    // 入力欄をクリア
+                    messageInput.value = '';
+                }
+            });
+    
+            // サーバーから受信したメッセージを表示
+            socket.on('chat message', (msg) => {
+                const messagesDiv = document.getElementById('messages');
+                const messageElement = document.createElement('div');
+                messageElement.innerText = msg;
+                messagesDiv.appendChild(messageElement);
+            });
+        </script>
+    </body>
+</html>
